@@ -44,16 +44,16 @@ df = df.fillna(0).applymap(lambda x: 1 if x == "X" else x)
 a = df.drop(index=["Salario"], columns=["Requerimiento"]).values
 a
 
-# Input parameters
+# Parametros de entrada
 n = a.shape[1]
 T = a.shape[0]
 d = df["Requerimiento"].values
 w = df.loc["Salario", :].values.astype(int)
 
-# Create problem
+# Creación del problema
 prob = LpProblem("programar_trabajadores", LpMinimize)
 
-# Decision variables
+# Variables de decisión
 y = LpVariable.dicts("num_trabajadores", list(range(n)), lowBound=0, cat="Integer")
 
 """## Formulación
@@ -67,10 +67,10 @@ La fomulación del modelo es:
 \end{align}
 """
 
-# Objective
+# Función Objetivo
 prob += lpSum([w[j] * y[j] for j in range(n)])
 
-# Subject to
+# Sujeto a
 for t in range(T):
     prob += lpSum([a[t, j] * y[j] for j in range(n)]) >= d[t]
 
@@ -79,9 +79,9 @@ print("Status:", LpStatus[prob.status])
 
 for shift in range(n):
     print(
-        f"The number of workers needed for shift {shift+1} is {int(y[shift].value())} workers"
+        f"El número de empleados requeridos por turno {shift+1} es {int(y[shift].value())} empleados"
     )
 
 print(
-    f"The total amount of money being paid to workers in {n} shifts are ${value(prob.objective)}",
+    f"El total de dinero a pagar de nomina en {n} turnos es ${value(prob.objective)}",
 )
